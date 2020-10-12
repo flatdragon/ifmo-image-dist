@@ -1,4 +1,4 @@
-from flask import Flask, Response, request
+from flask import Flask, Response, request, render_template
 import requests
 import hashlib
 import redis
@@ -6,7 +6,7 @@ import redis
 app = Flask(__name__)
 cache = redis.StrictRedis(host='redis', port=6379, db=0)
 salt = "UNIQUE_SALT"
-default_name = 'Joe Bloggs'
+default_name = 'Andrew'
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -18,17 +18,8 @@ def mainpage():
 
     salted_name = salt + name
     name_hash = hashlib.sha256(salted_name.encode()).hexdigest()
-    header = '<html><head><title>Identidock</title></head><body>'
-    body = '''<form method="POST">
-              Hello <input type="text" name="name" value="{0}">
-              <input type="submit" value="submit">
-              </form>
-              <p>You look like a:
-              <img src="/monster/{1}"/>
-              '''.format(name, name_hash)
-    footer = '</body></html>'
 
-    return header + body + footer
+    return render_template('template.html', name=name, name_hash=name_hash)
 
 
 @app.route('/monster/<name>')
