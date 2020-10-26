@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  monster:
+    image: amouat/dnmonster:1.0
+    expose:
+      - 8080
+  redis:
+    image: redis
+    environment:
+      - REDIS_APPENDONLY=yes
+      - REDIS_APPENDFSYNC=always
+    expose:
+      - 6379
+    volumes:
+      - ./redis/data:/data
+    depends_on:
+      - monster
+  app:
+    build:
+      context: ./app
+      args:
+        APP_SECRET_KEY: ${APP_SECRET_KEY}
+        APP_ENV: ${APP_ENV}
+        APP_PORT: ${APP_PORT}
+        APP_STATS_PORT: ${APP_STATS_PORT}
+        APP_LOGGER_PORT: ${APP_LOGGER_PORT}
+        APP_PATH: ${APP_PATH}
+    volumes:
+      - ./app/src:${APP_PATH}/src
+    ports:
+      - 9090:${APP_PORT}
+      - 9191:${APP_STATS_PORT}
+      - 9292:${APP_LOGGER_PORT}
+    depends_on:
+      - redis
+      - monster
