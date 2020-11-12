@@ -1,5 +1,8 @@
 # Monster Avatar App Using Docker
 
+## Author
+Kochetygov Andrew
+
 ## Installation
 ```shell script
 git clone https://github.com/flatdragon/ifmo-image-dist.git
